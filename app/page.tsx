@@ -16,7 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { DownloadIcon, RefreshCwIcon, Wand2 } from "lucide-react";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { domain } from "@/app/lib/domain";
@@ -167,7 +167,8 @@ export default function Page() {
   // 修改状态名称
   const [remainingCredits, setRemainingCredits] = useState<number | null>(null);
 
-  const fetchUserCredits = async () => {
+  // 使用 useCallback 来缓存函数
+  const fetchUserCredits = useCallback(async () => {
     if (!isSignedIn) return;
     
     try {
@@ -184,18 +185,17 @@ export default function Page() {
       } else {
         console.error('Error fetching credits:', data.error);
       }
-    } catch (error) {
-      console.error('Error fetching user credits:', error);
+    } catch (err) {
+      console.error('Error fetching user credits:', err);
       toast({
         title: "错误",
         description: "获取使用次数失败",
         variant: "destructive",
       });
     }
-  };
+  }, [isSignedIn]);
 
-  // 添加初始化用户次数的函数
-  const initializeUserCredits = async () => {
+  const initializeUserCredits = useCallback(async () => {
     if (!isSignedIn || !user?.id) return;
     
     try {
@@ -207,7 +207,6 @@ export default function Page() {
 
       const userData = await response.json();
       
-      // Check if initialization is needed
       if (typeof userData.metadata?.public?.remaining !== 'number') {
         const updateResponse = await fetch('/api/initialize-credits', {
           method: 'POST',
@@ -217,20 +216,16 @@ export default function Page() {
           throw new Error('Failed to initialize credits');
         }
 
-        // Refresh user credits
         await fetchUserCredits();
       }
-    } catch (error) {
-      console.error('Error initializing user credits:', error);
+    } catch (err) {
+      console.error('Error initializing user credits:', err);
     }
-  };
+  }, [isSignedIn, user?.id, fetchUserCredits]);
 
-  // 在 useEffect 中调用
   useEffect(() => {
     if (isSignedIn && user?.id) {
-      // 先进行初始化
       initializeUserCredits().then(() => {
-        // 初始化完成后再获取次数
         fetchUserCredits();
       });
     }

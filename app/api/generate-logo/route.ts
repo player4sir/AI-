@@ -29,12 +29,12 @@ const requestSchema = z.object({
 });
 
 // 定义风格类型
-type STYLES = {
-  [key: string]: string[];
-};
+interface StyleDescription {
+  [key: string]: string;
+}
 
 // 简化风格描述
-const styleDescriptions: Record<string, string> = {
+const styleDescriptions: StyleDescription = {
   "时尚": "modern and eye-catching design with metallic accents",
   "科技": "clean and minimalist tech style with subtle geometric patterns",
   "现代": "contemporary design with clean lines and balanced composition",

@@ -46,16 +46,18 @@ export default function AdminPage() {
         console.log('Auth response:', data);
         
         if (!response.ok) {
+          console.error('Failed to check admin status:', data.error);
           throw new Error(data.error || 'Failed to check admin status');
         }
         
         if (!data.success) {
+          console.error('Invalid response format:', data.error);
           throw new Error(data.error || 'Invalid response format');
         }
 
         setIsAdmin(data.data.isAdmin);
-      } catch (error) {
-        console.error("Error checking admin status:", error);
+      } catch (err) {
+        console.error("Error checking admin status:", err);
         setIsAdmin(false);
       }
     };
