@@ -6,13 +6,11 @@ import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 
 export default function ActivatePage() {
   const [activationCode, setActivationCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { isSignedIn } = useUser();
 
   const handleActivate = async () => {
     if (!activationCode.trim()) {

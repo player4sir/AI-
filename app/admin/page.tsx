@@ -74,9 +74,15 @@ export default function AdminPage() {
       if (data.success) {
         setCodes(data.codes);
       } else {
-        throw new Error(data.error);
+        console.error('Failed to fetch codes:', data.error);
+        toast({
+          title: "错误",
+          description: "获取激活码列表失败",
+          variant: "destructive",
+        });
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Error fetching codes:', err);
       toast({
         title: "错误",
         description: "获取激活码列表失败",
@@ -95,11 +101,11 @@ export default function AdminPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          code: newCode || undefined, // 如果为空则由服务器生成
+          code: newCode || undefined,
           type: codeType,
           credits: codeType === "credits" ? credits : undefined,
           maxUses,
-          expiresIn: expiresIn * 24 * 60 * 60 * 1000, // 转换为毫秒
+          expiresIn: expiresIn * 24 * 60 * 60 * 1000,
         }),
       });
 
@@ -113,9 +119,11 @@ export default function AdminPage() {
         setNewCode("");
         fetchCodes();
       } else {
+        console.error('Failed to generate code:', data.error);
         throw new Error(data.error);
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Error generating code:', err);
       toast({
         title: "错误",
         description: "创建激活码失败",
@@ -142,9 +150,11 @@ export default function AdminPage() {
         });
         fetchCodes();
       } else {
+        console.error('Failed to delete code:', data.error);
         throw new Error(data.error);
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Error deleting code:', err);
       toast({
         title: "错误",
         description: "删除激活码失败",
