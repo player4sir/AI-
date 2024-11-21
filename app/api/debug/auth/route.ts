@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
         isAdmin
       }
     });
-  } catch (_) {
+  } catch (error) {
     return Response.json({ 
       success: false,
       error: "Internal server error" 

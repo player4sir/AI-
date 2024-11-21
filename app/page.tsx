@@ -212,12 +212,7 @@ export default function Page() {
     if (!isSignedIn || !user?.id) return;
     
     try {
-      const response = await fetch(`https://api.clerk.com/v1/users/${user.id}`, {
-        headers: {
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}`,
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch('/api/user/metadata');
 
       if (!response.ok) {
         throw new Error('Failed to fetch user data');
@@ -225,8 +220,8 @@ export default function Page() {
 
       const userData = await response.json();
       
-      // 这里检查 remaining 字段是否存在，如果不存在才会初始化
-      if (typeof userData.public_metadata?.remaining !== 'number') {
+      // Check if initialization is needed
+      if (typeof userData.metadata?.public?.remaining !== 'number') {
         const updateResponse = await fetch('/api/initialize-credits', {
           method: 'POST',
         });
@@ -235,7 +230,7 @@ export default function Page() {
           throw new Error('Failed to initialize credits');
         }
 
-        // 重新获取用户次数
+        // Refresh user credits
         await fetchUserCredits();
       }
     } catch (error) {
@@ -246,13 +241,13 @@ export default function Page() {
   // 在 useEffect 中调用
   useEffect(() => {
     if (isSignedIn && user?.id) {
-      const init = async () => {
-        await initializeUserCredits();
-        await fetchUserCredits();
-      };
-      init();
+      // 先进行初始化
+      initializeUserCredits().then(() => {
+        // 初始化完成后再获取次数
+        fetchUserCredits();
+      });
     }
-  }, [isSignedIn, user?.id, initializeUserCredits, fetchUserCredits]);
+  }, [isSignedIn, user?.id]);
 
   const generateImage = async () => {
     if (!additionalInfo.trim()) {

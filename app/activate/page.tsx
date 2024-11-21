@@ -6,11 +6,13 @@ import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { useUser } from "@clerk/nextjs";
 import { motion } from "framer-motion";
 
 export default function ActivatePage() {
   const [activationCode, setActivationCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useUser();
 
   const handleActivate = async () => {
     if (!activationCode.trim()) {
@@ -42,12 +44,15 @@ export default function ActivatePage() {
           description: "激活成功",
         });
         
+        // 清空激活码输入
         setActivationCode("");
+        
+        // 刷新页面以更新用户状态
         window.location.reload();
       } else {
         throw new Error(data.error || "激活失败");
       }
-    } catch (_) {
+    } catch (error) {
       toast({
         title: "错误",
         description: "激活码无效或已使用",

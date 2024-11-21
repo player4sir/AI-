@@ -9,7 +9,10 @@ const publicPaths = [
   "/sign-in(.*)", 
   "/sign-up(.*)",
   "/price",  // 添加价格页面到公开路由
-  "/price/(.*)"
+  "/price/(.*)",
+  "/api/user/metadata",
+  "/api/initialize-credits",
+  "/api/user-credits"
 ];
 
 function isPublic(path: string) {
