@@ -12,7 +12,8 @@ const publicPaths = [
   "/price/(.*)",
   "/api/user/metadata",
   "/api/initialize-credits",
-  "/api/user-credits"
+  "/api/user-credits",
+  "/api/generate-image"
 ];
 
 function isPublic(path: string) {
@@ -27,9 +28,10 @@ export default clerkMiddleware(async (auth, req) => {
   // 验证请求来源
   const referer = req.headers.get('referer');
   const allowedDomains = [
-    'your-domain.com',
-    'www.your-domain.com',
-    'localhost:3000'
+    'ai.mzdn.us.kg',        // 你的代理域名
+    'a-iimage-nine.vercel.app',  // Vercel 原始域名
+    'localhost:3000',
+    'localhost'
   ];
 
   if (req.nextUrl.pathname.startsWith('/api/') && 

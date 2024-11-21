@@ -475,11 +475,21 @@ async function enhancePrompt(type: CreationType, basePrompt: string): Promise<st
 
 export async function POST(req: NextRequest) {
   try {
+    const { userId } = getAuth(req);
+    if (!userId) {
+      return Response.json({ 
+        error: "Unauthorized - No user ID",
+        success: false 
+      }, { 
+        status: 401 
+      });
+    }
+
     // 验证自定义请求头
     const apiKey = req.headers.get('x-api-key');
-    if (apiKey !== process.env.API_SECRET_KEY) {
+    if (apiKey !== process.env.NEXT_PUBLIC_API_KEY) {
       return Response.json({ 
-        error: "Unauthorized",
+        error: "Invalid API key",
         success: false 
       }, { 
         status: 401 
@@ -492,17 +502,19 @@ export async function POST(req: NextRequest) {
     
     if (!success) {
       return Response.json({ 
-        error: "Too many requests",
-        success: false 
+        error: "Rate limit exceeded",
+        success: false,
+        reset,
+        remaining 
       }, { 
         status: 429,
         headers: {
-          'Retry-After': reset.toString()
+          'Retry-After': reset.toString(),
+          'X-RateLimit-Remaining': remaining.toString()
         }
       });
     }
 
-    const { userId } = getAuth(req);
     const body = await req.json();
     const { type, style, additionalInfo, size, model } = requestSchema.parse(body);
 
@@ -584,6 +596,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
+    console.error('Image generation error:', error);
     return Response.json({ 
       error: error instanceof Error ? error.message : "Failed to generate image",
       success: false 

@@ -4,6 +4,16 @@ import { DEFAULT_CREDITS } from '../../lib/constants';
 
 export async function GET(req: NextRequest) {
   try {
+    const apiKey = req.headers.get('x-api-key');
+    if (apiKey !== process.env.NEXT_PUBLIC_API_KEY) {
+      return Response.json({ 
+        error: "Invalid API key",
+        success: false 
+      }, { 
+        status: 401 
+      });
+    }
+
     const { userId } = getAuth(req);
     
     if (!userId) {
