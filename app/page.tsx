@@ -246,13 +246,13 @@ export default function Page() {
   // 在 useEffect 中调用
   useEffect(() => {
     if (isSignedIn && user?.id) {
-      // 先进行初始化
-      initializeUserCredits().then(() => {
-        // 初始化完成后再获取次数
-        fetchUserCredits();
-      });
+      const init = async () => {
+        await initializeUserCredits();
+        await fetchUserCredits();
+      };
+      init();
     }
-  }, [isSignedIn, user?.id]);
+  }, [isSignedIn, user?.id, initializeUserCredits, fetchUserCredits]);
 
   const generateImage = async () => {
     if (!additionalInfo.trim()) {
