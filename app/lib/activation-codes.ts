@@ -43,7 +43,8 @@ export const activationCodes = {
       }
       
       return activationCode;
-    } catch (error) {
+    } catch (err) {
+      console.error('Validate activation code error:', err);
       return null;
     }
   },
@@ -69,7 +70,8 @@ export const activationCodes = {
       
       await redis.set(userKey, "1");
       return true;
-    } catch (error) {
+    } catch (err) {
+      console.error('Mark activation code as used error:', err);
       return false;
     }
   },
@@ -84,7 +86,8 @@ export const activationCodes = {
       // 确保数据是字符串格式
       const dataString = typeof data === 'string' ? data : JSON.stringify(data);
       return JSON.parse(dataString) as ActivationCode;
-    } catch (error) {
+    } catch (err) {
+      console.error('Get activation code error:', err);
       return null;
     }
   }

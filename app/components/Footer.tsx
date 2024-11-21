@@ -1,7 +1,3 @@
-import TwitterSVG from "../../public/twitter.svg";
-import GithubSVG from "../../public/Github.svg";
-import Image from "next/image";
-
 export default function Footer() {
   return (
     <footer className="flex items-center justify-center border-t border-[#343434] px-4 py-6 text-center text-sm text-[#6F6F6F]">

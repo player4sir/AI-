@@ -29,11 +29,12 @@ const requestSchema = z.object({
 });
 
 // 定义风格类型
-const STYLES = ["时尚", "科技", "现代", "活泼", "抽象", "简约"] as const;
-type StyleKey = typeof STYLES[number];
+type STYLES = {
+  [key: string]: string[];
+};
 
 // 简化风格描述
-const styleDescriptions: Record<StyleKey, string> = {
+const styleDescriptions: Record<string, string> = {
   "时尚": "modern and eye-catching design with metallic accents",
   "科技": "clean and minimalist tech style with subtle geometric patterns",
   "现代": "contemporary design with clean lines and balanced composition",
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest) {
 
     // 简化基础 prompt
     const basePrompt = dedent`
-      Professional logo for ${companyName}. ${styleDescriptions[style as StyleKey] || styleDescriptions["简约"]}.
+      Professional logo for ${companyName}. ${styleDescriptions[style] || styleDescriptions["简约"]}.
       Use ${color.toLowerCase()} as main color on ${background.toLowerCase()} background.
     `;
 

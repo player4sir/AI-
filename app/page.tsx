@@ -2,7 +2,6 @@
 
 import Spinner from "@/app/components/Spinner";
 import { Button } from "@/app/components/ui/button";
-import { Input } from "@/app/components/ui/input";
 import { motion } from "framer-motion";
 import { Textarea } from "@/app/components/ui/textarea";
 import {
@@ -153,12 +152,6 @@ type SizeOption = "1:1" | "16:9" | "9:16";
 
 export default function Page() {
   // 基础状态
-  const [userAPIKey, setUserAPIKey] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("userAPIKey") || "";
-    }
-    return "";
-  });
   const [isLoading, setIsLoading] = useState(false);
   const [generatedImage, setGeneratedImage] = useState("");
 
@@ -173,12 +166,6 @@ export default function Page() {
 
   // 修改状态名称
   const [remainingCredits, setRemainingCredits] = useState<number | null>(null);
-
-  const handleAPIKeyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setUserAPIKey(newValue);
-    localStorage.setItem("userAPIKey", newValue);
-  };
 
   const fetchUserCredits = async () => {
     if (!isSignedIn) return;
@@ -247,7 +234,7 @@ export default function Page() {
         fetchUserCredits();
       });
     }
-  }, [isSignedIn, user?.id]);
+  }, [isSignedIn, user?.id, fetchUserCredits, initializeUserCredits]);
 
   const generateImage = async () => {
     if (!additionalInfo.trim()) {
@@ -308,7 +295,8 @@ export default function Page() {
       // 触发 Header 更新
       updateHeaderCredits();
       
-    } catch (error) {
+    } catch (err) {
+      console.error('Generate image error:', err);
       toast({
         title: "错误",
         description: "生成图片失败，请重试。",

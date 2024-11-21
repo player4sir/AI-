@@ -23,7 +23,8 @@ export async function GET(req: NextRequest) {
         isAdmin
       }
     });
-  } catch (error) {
+  } catch (err) {
+    console.error('Auth debug error:', err);
     return Response.json({ 
       success: false,
       error: "Internal server error" 

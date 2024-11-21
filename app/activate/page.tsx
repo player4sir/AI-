@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 export default function ActivatePage() {
   const [activationCode, setActivationCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useUser();
+  const { isSignedIn } = useUser();
 
   const handleActivate = async () => {
     if (!activationCode.trim()) {
@@ -52,7 +52,8 @@ export default function ActivatePage() {
       } else {
         throw new Error(data.error || "激活失败");
       }
-    } catch (error) {
+    } catch (err) {
+      console.error('Activation error:', err);
       toast({
         title: "错误",
         description: "激活码无效或已使用",
