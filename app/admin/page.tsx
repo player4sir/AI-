@@ -51,7 +51,7 @@ export default function AdminPage() {
         }
 
         setIsAdmin(data.data.isAdmin);
-      } catch (err) {
+      } catch (_) {
         console.error("Admin status check failed");
         setIsAdmin(false);
       }
