@@ -272,7 +272,7 @@ export default function Page() {
 
       if (response.status === 401) {
         toast({
-          title: "错���",
+          title: "错",
           description: "未授权的访问",
           variant: "destructive",
         });
@@ -588,7 +588,7 @@ function getPlaceholderByType(type: CreationType): string {
     logo: "描述您的品牌/公司特点，例如：一家专注于环保科技的创新公司...",
     childrenBook: "描述故事场景或角色，例如：一只爱冒险的小兔子在魔法森林里...",
     illustration: "描述您想要的插画内容，例如：一个未来科技风的城市街景...",
-    portrait: "描述人物特征和场景，例如：一位穿着复古礼服的优雅女性，侧光打在脸��...",
+    portrait: "描述人物特征和场景，例如：一位穿着复古礼服的优雅女性，侧光打在脸...",
     concept: "描述设计概念，例如：一款未来主义风格的电动汽车，流线型车身...",
     scene: "描述场景细节，例如：一座漂浮在云端的未来城市，充满科技感的建筑...",
     character: "描述角色特征，例如：一位身穿盔甲的未来战士，手持能量武器...",

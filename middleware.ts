@@ -13,7 +13,8 @@ const publicPaths = [
   "/api/user/metadata",
   "/api/initialize-credits",
   "/api/user-credits",
-  "/api/generate-image"
+  "/api/generate-image",
+  "/api/activate"
 ];
 
 function isPublic(path: string) {
