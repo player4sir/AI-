@@ -17,14 +17,25 @@ export async function GET(req: NextRequest) {
     const adminIds = getAdminIds();
     const isAdmin = adminIds.has(userId);
 
-    return Response.json({
-      success: true,
-      data: {
-        isAdmin
-      }
-    });
+    if (process.env.NODE_ENV === 'production') {
+      return Response.json({
+        success: true,
+        data: {
+          isAdmin: isAdmin
+        }
+      });
+    } else {
+      return Response.json({
+        success: true,
+        data: {
+          isAdmin: isAdmin,
+          userId: userId,
+          environment: process.env.NODE_ENV
+        }
+      });
+    }
   } catch (err) {
-    console.error('Auth debug error:', err);
+    console.error('Auth check failed');
     return Response.json({ 
       success: false,
       error: "Internal server error" 

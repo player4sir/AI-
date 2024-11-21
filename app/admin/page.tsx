@@ -34,7 +34,6 @@ export default function AdminPage() {
   useEffect(() => {
     const checkAdmin = async () => {
       if (!isSignedIn || !user?.id) {
-        console.log('Not signed in or no user ID');
         setIsAdmin(false);
         return;
       }
@@ -43,21 +42,17 @@ export default function AdminPage() {
         const response = await fetch("/api/debug/auth");
         const data = await response.json();
         
-        console.log('Auth response:', data);
-        
         if (!response.ok) {
-          console.error('Failed to check admin status:', data.error);
           throw new Error(data.error || 'Failed to check admin status');
         }
         
         if (!data.success) {
-          console.error('Invalid response format:', data.error);
           throw new Error(data.error || 'Invalid response format');
         }
 
         setIsAdmin(data.data.isAdmin);
       } catch (err) {
-        console.error("Error checking admin status:", err);
+        console.error("Admin status check failed");
         setIsAdmin(false);
       }
     };
