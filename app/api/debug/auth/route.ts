@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
         }
       });
     }
-  } catch (_) {
+  } catch {
     console.error('Auth check failed');
     return Response.json({ 
       success: false,
