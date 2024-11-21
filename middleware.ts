@@ -24,6 +24,19 @@ function isPublic(path: string) {
 export default clerkMiddleware(async (auth, req) => {
   const path = req.nextUrl.pathname;
   
+  // 验证请求来源
+  const referer = req.headers.get('referer');
+  const allowedDomains = [
+    'your-domain.com',
+    'www.your-domain.com',
+    'localhost:3000'
+  ];
+
+  if (req.nextUrl.pathname.startsWith('/api/') && 
+      !allowedDomains.some(domain => referer?.includes(domain))) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   // 如果是公开路由，直接放行
   if (isPublic(path)) {
     return NextResponse.next();

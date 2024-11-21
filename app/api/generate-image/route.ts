@@ -6,17 +6,15 @@ import { NextRequest } from "next/server";
 import { z } from "zod";
 
 // 初始化 rate limiter
-let ratelimit: Ratelimit | undefined;
-if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-  const redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN,
-  });
-  ratelimit = new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(30, "1 m"),
-  });
-}
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL!,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+});
+
+const ratelimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, "1h"), // 每小时限制10次
+});
 
 export const runtime = "edge";
 
@@ -144,7 +142,7 @@ Focus on:
 Do not include these instructions in the output. Return only the enhanced prompt.`,
 };
 
-// 更新风格属性，为每种风格添加完整的描述和关键词
+// 更风格属性，为每种风格添加完整的描述和关键词
 const styleAttributes = {
   "写实": {
     keywords: "photorealistic, ultra detailed photography",
@@ -477,27 +475,36 @@ async function enhancePrompt(type: CreationType, basePrompt: string): Promise<st
 
 export async function POST(req: NextRequest) {
   try {
+    // 验证自定义请求头
+    const apiKey = req.headers.get('x-api-key');
+    if (apiKey !== process.env.API_SECRET_KEY) {
+      return Response.json({ 
+        error: "Unauthorized",
+        success: false 
+      }, { 
+        status: 401 
+      });
+    }
+
+    // 速率限制检查
+    const ip = req.ip ?? "anonymous";
+    const { success, limit, reset, remaining } = await ratelimit.limit(ip);
+    
+    if (!success) {
+      return Response.json({ 
+        error: "Too many requests",
+        success: false 
+      }, { 
+        status: 429,
+        headers: {
+          'Retry-After': reset.toString()
+        }
+      });
+    }
+
     const { userId } = getAuth(req);
     const body = await req.json();
     const { type, style, additionalInfo, size, model } = requestSchema.parse(body);
-
-    // Rate limiting
-    if (ratelimit) {
-      const identifier = userId ?? req.ip ?? "anonymous";
-      const result = await ratelimit.limit(identifier);
-      
-      if (!result.success) {
-        return Response.json({ 
-          error: "请稍后再试",
-          success: false 
-        }, { 
-          status: 429,
-          headers: {
-            'Retry-After': result.reset.toString()
-          }
-        });
-      }
-    }
 
     // 在生成图片之前检查用户权限
     const userResponse = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
