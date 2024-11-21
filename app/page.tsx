@@ -175,7 +175,9 @@ export default function Page() {
       const response = await fetch('/api/user-credits', {
         headers: {
           'x-api-key': process.env.NEXT_PUBLIC_API_KEY!,
-        }
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
       });
       
       if (!response.ok) {
@@ -591,7 +593,7 @@ function getPlaceholderByType(type: CreationType): string {
     portrait: "描述人物特征和场景，例如：一位穿着复古礼服的优雅女性，侧光打在脸...",
     concept: "描述设计概念，例如：一款未来主义风格的电动汽车，流线型车身...",
     scene: "描述场景细节，例如：一座漂浮在云端的未来城市，充满科技感的建筑...",
-    character: "描述角色特征，例如：一位身穿盔甲的未来战士，手持能量武器...",
+    character: "描述角色特征，例如：一位身穿盔甲的未来战士，���持能量武器...",
     ecommerce: "描述您的商品特点和场景，例如：一款时尚的女士手提包，采用高级真皮材质，搭配金色五金件...",
   };
   return placeholders[type];

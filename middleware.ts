@@ -26,23 +26,17 @@ function isPublic(path: string) {
 export default clerkMiddleware(async (auth, req) => {
   const path = req.nextUrl.pathname;
   
-  // 验证请求来源
-  const referer = req.headers.get('referer');
-  const allowedDomains = [
-    'ai.mzdn.us.kg',        // 你的代理域名
-    'a-iimage-nine.vercel.app',  // Vercel 原始域名
-    'localhost:3000',
-    'localhost'
-  ];
-
-  if (req.nextUrl.pathname.startsWith('/api/') && 
-      !allowedDomains.some(domain => referer?.includes(domain))) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   // 如果是公开路由，直接放行
   if (isPublic(path)) {
     return NextResponse.next();
+  }
+
+  // 验证请求来源
+  if (req.nextUrl.pathname.startsWith('/api/')) {
+    const apiKey = req.headers.get('x-api-key');
+    if (apiKey !== process.env.NEXT_PUBLIC_API_KEY) {
+      return Response.json({ error: 'Invalid API key' }, { status: 401 });
+    }
   }
 
   // 获取认证状态
@@ -55,7 +49,6 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.redirect(signInUrl);
   }
 
-  // 用户已登录，继续处理请求
   return NextResponse.next();
 });
 
