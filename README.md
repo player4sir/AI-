@@ -1,7 +1,6 @@
-<a href="https://www.aicreator.cn">
-  <img alt="AI Creator" src="./public/og-image.png">
+
   <h1 align="center">AI 创作助手</h1>
-</a>
+
 
 <p align="center">
   开源的 AI 创作平台 – 轻松创作壁纸、Logo、儿童绘本和插画。
@@ -9,7 +8,6 @@
 
 ## 技术栈
 
-- [API.Airforce](https://api.airforce) 用于图像生成
 - [Next.js](https://nextjs.org/) 和 TypeScript 构建应用框架
 - [Shadcn](https://ui.shadcn.com/) UI 组件 & [Tailwind](https://tailwindcss.com/) 样式
 - [Upstash Redis](https://upstash.com/) 用于速率限制
