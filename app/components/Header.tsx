@@ -31,7 +31,13 @@ export default function Header({ className = "" }: { className?: string }) {
       if (!user) return;
       
       try {
-        const response = await fetch('/api/user-credits');
+        const response = await fetch('/api/user-credits', {
+          headers: {
+            'x-api-key': process.env.NEXT_PUBLIC_API_KEY!,
+            'Content-Type': 'application/json',
+          }
+        });
+        
         if (!response.ok) throw new Error('Failed to fetch credits');
         
         const data = await response.json();
